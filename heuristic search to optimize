@@ -1,0 +1,59 @@
+#heuristic search to optimize
+
+decision-tree hypothesis
+import pandas as pd
+import numpy as np
+from math import log2
+
+
+data = {
+    'Outlook': ['Sunny','Sunny','Overcast','Rain','Rain','Overcast'],
+    'Humidity': ['High','High','High','Normal','Normal','Normal'],
+    'Wind': ['Weak','Strong','Weak','Weak','Strong','Strong'],
+    'Play': ['No','No','Yes','Yes','No','Yes']
+}
+
+df = pd.DataFrame(data)
+
+
+def entropy(target_col):
+    values, counts = np.unique(target_col, return_counts=True)
+    entropy_value = 0
+    for i in range(len(values)):
+        p = counts[i] / np.sum(counts)
+        entropy_value -= p * log2(p)
+    return entropy_value
+
+def information_gain(data, split_attr, target_attr):
+    total_entropy = entropy(data[target_attr])
+    values, counts = np.unique(data[split_attr], return_counts=True)
+
+    weighted_entropy = 0
+    for i in range(len(values)):
+        subset = data[data[split_attr] == values[i]]
+        weighted_entropy += (counts[i] / np.sum(counts)) * entropy(subset[target_attr])
+
+    return total_entropy - weighted_entropy
+
+
+attributes = ['Outlook', 'Humidity', 'Wind']
+gains = {}
+
+for attr in attributes:
+    gains[attr] = information_gain(df, attr, 'Play')
+
+best_attr = max(gains, key=gains.get)
+
+print("Information Gain Values:")
+for k, v in gains.items():
+    print(k, ":", round(v, 4))
+
+print("\nBest Attribute to Split (Heuristic Choice):", best_attr)
+
+
+Information Gain Values:
+Outlook : 0.6667
+Humidity : 0.0817
+Wind : 0.0817
+
+Best Attribute to Split (Heuristic Choice): Outlook
