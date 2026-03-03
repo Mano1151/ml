@@ -1,0 +1,42 @@
+#ID3 decision-tree
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+
+
+data = {
+    'Outlook': ['Sunny','Sunny','Overcast','Rain','Rain','Rain','Overcast',
+                'Sunny','Sunny','Rain','Sunny','Overcast','Overcast','Rain'],
+    'Humidity': ['High','High','High','High','Normal','Normal','Normal',
+                 'High','Normal','Normal','Normal','High','Normal','High'],
+    'Wind': ['Weak','Strong','Weak','Weak','Weak','Strong','Strong',
+             'Weak','Weak','Weak','Strong','Strong','Weak','Strong'],
+    'Play': ['No','No','Yes','Yes','Yes','No','Yes',
+             'No','Yes','Yes','Yes','Yes','Yes','No']
+}
+
+df = pd.DataFrame(data)
+
+
+X = pd.get_dummies(df.drop('Play', axis=1))
+y = df['Play']
+
+
+model = DecisionTreeClassifier(criterion='entropy')
+model.fit(X, y)
+
+
+sample = pd.DataFrame({
+    'Outlook': ['Sunny'],
+    'Humidity': ['High'],
+    'Wind': ['Strong']
+})
+
+sample_encoded = pd.get_dummies(sample)
+sample_encoded = sample_encoded.reindex(columns=X.columns, fill_value=0)
+
+prediction = model.predict(sample_encoded)
+
+print(prediction[0])
+
+
+No
