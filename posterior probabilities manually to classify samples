@@ -1,0 +1,39 @@
+#Compute posterior probabilities manually to classify samples
+import numpy as np
+
+def h1(x): return "Yes"
+def h2(x): return "No"
+def h3(x): return "Yes" if x == 1 else "No"
+def h4(x): return "Yes" if x == 0 else "No"
+
+hypotheses = [h1, h2, h3, h4]
+hyp_names = ["h1", "h2", "h3", "h4"]
+
+
+posterior = np.array([0.25, 0.25, 0.25, 0.25])
+
+
+training_data = [(1, "Yes"), (0, "No")]
+
+for x, label in training_data:
+    likelihood = []
+
+    for h in hypotheses:
+        prediction = h(x)
+        if prediction == label:
+            likelihood.append(1)
+        else:
+            likelihood.append(0)
+
+    likelihood = np.array(likelihood)
+
+
+    posterior = likelihood * posterior
+    if posterior.sum() != 0:
+        posterior = posterior / posterior.sum()
+
+print(dict(zip(hyp_names, posterior)))
+
+
+
+{'h1': np.float64(0.0), 'h2': np.float64(0.0), 'h3': np.float64(1.0), 'h4': np.float64(0.0)}
